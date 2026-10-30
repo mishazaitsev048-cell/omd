@@ -1,7 +1,10 @@
 import csv
+import sys
 
 
 def report_1(rows: list[dict[str, str]]) -> dict[str, set[str]]:
+    """Строит иерархию:
+    для каждого департамента возвращает множество отделов."""
     if not isinstance(rows, list):
         raise ValueError('Отчет принимает список')
     commands: dict[str, set[str]]
@@ -13,6 +16,8 @@ def report_1(rows: list[dict[str, str]]) -> dict[str, set[str]]:
 
 
 def report_2(rows: list[dict[str, str]]) -> list[dict[str, str | int | float]]:
+    """Считает сводку по департаментам:
+    численность и статистику по зарплатам."""
     if not isinstance(rows, list):
         raise ValueError('Отчет принимает список')
     dep_stats: dict[str, list[int]]
@@ -51,6 +56,7 @@ def report_2(rows: list[dict[str, str]]) -> list[dict[str, str | int | float]]:
 
 def report_3(rows: list[dict[str, str]],
              output_file_name: str = 'homework_report.csv') -> None:
+    """Записывает сводку по департаментам в csv-файл."""
     if not isinstance(rows, list):
         raise ValueError('Отчет принимает список')
     summaries = report_2(rows)
@@ -66,6 +72,7 @@ def report_3(rows: list[dict[str, str]],
 
 
 def reader(file_name: str) -> list[dict[str, str]]:
+    """Читает csv-файл и возвращает список строк в виде словарей."""
     with open(file_name, 'r', encoding='utf-8') as f:
         csv_reader = csv.DictReader(f, delimiter=';')
         if csv_reader.fieldnames is None:
@@ -90,6 +97,7 @@ def reader(file_name: str) -> list[dict[str, str]]:
 def main(report_number: int,
          file_name: str = 'Corp_Summary.csv',
          output_file_name: str | None = None) -> None:
+    """Запускает чтение файла и формирование отчета по номеру."""
     if isinstance(report_number, bool) or not isinstance(report_number, int):
         raise ValueError('Номер отчета должен быть числом')
     if not isinstance(file_name, str):
@@ -112,3 +120,12 @@ def main(report_number: int,
             report_3(rows)
         else:
             report_3(rows, output_file_name)
+
+
+if __name__ == '__main__':
+    # Если передали аргумент, то берется нужный отчет, иначе берем первый
+    if len(sys.argv) > 1:
+        report_num = int(sys.argv[1])
+    else:
+        report_num = 1
+    main(report_num)
